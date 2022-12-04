@@ -1,24 +1,45 @@
-const weatherForm = document.querySelector('form')
-const search = document.querySelector('input')
-const messageOne = document.querySelector('#message-1')
-const messageTwo = document.querySelector('#message-2')
+var fetchWeather = "/weather";
 
-weatherForm.addEventListener('submit', (e) => {
-    e.preventDefault()
+const weatherForm = document.querySelector('form');
+const search = document.querySelector('input');
 
-    const location = search.value
+const weatherIcon = document.querySelector('.weatherIcon i');
+const weatherCondition = document.querySelector('.weatherCondition');
 
-    messageOne.textContent = 'Loading...'
-    messageTwo.textContent = ''
+const tempElement = document.querySelector('.temperature span');
 
-    fetch('/weather?address=' + location).then((response) => {
-        response.json().then((data) => {
-            if (data.error) {
-                messageOne.textContent = data.error
+const locationElement = document.querySelector('.place');
+
+const dateElement = document.querySelector('.date');
+
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+dateElement.textContent = new Date().getDate() + ", " + monthNames[new Date().getMonth()].substring(0, 3);
+
+
+weatherForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    locationElement.textContent = "Loading...";
+    tempElement.textContent = "";
+    weatherCondition.textContent = "";
+    const locationApi = fetchWeather + "?address=" + search.value;
+    fetch(locationApi).then(response => {
+        response.json().then(data => {
+            if(data.error) {
+                locationElement.textContent = data.error;
+                tempElement.textContent = "";
+                weatherCondition.textContent = "";
             } else {
-                messageOne.textContent = data.location
-                messageTwo.textContent = data.forecast
+                console.log()
+                if(data.description === "rain" || data.description === "fog") {
+                    weatherIcon.className = "wi wi-day-" + data.description
+                } else {
+                    weatherIcon.className = "wi wi-day-cloudy"
+                }
+                locationElement.textContent = data.cityName;
+                tempElement.textContent = (data.temperature - 273.5).toFixed(2) + String.fromCharCode(176);
+                weatherCondition.textContent = data.description.toUpperCase();
             }
-        })
-    })
+        }) 
+    });
 })
