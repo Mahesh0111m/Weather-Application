@@ -3,7 +3,7 @@ const hbs = require("hbs");
 const path = require("path");
 const app = express();
 
-const weatherData = require('../utils/weatherData');
+const weatherData = require('../utils/weatherdata');
 
 const port = process.env.PORT || 3000
 
